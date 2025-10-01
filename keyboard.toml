@@ -1,0 +1,58 @@
+[keyboard]
+name = "Clavier Urchin"
+product_name = "Clavier Urchin"
+vendor_id = 0x4c4b
+product_id = 0x4643
+manufacturer = "Timothe"
+board = "nice!nano_v2"
+
+[layout]
+rows = 4
+cols = 10
+layers = 3
+
+keymap = [[
+    ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
+    ["MT(A, LGui)", "MT(S, LAlt)", "MT(D, LCtrl)", "MT(F, LShift)", "G", "H", "MT(J, RShift)", "MT(K, RCtrl)", "MT(L, LAlt)", "MT(Semicolon, RGui)"],
+    ["Z", "X", "C", "V", "B", "N", "M", "Comma", "Dot", "Slash"],
+    ["_", "_", "_", "LT(1, Space)", "LT(2, Enter)", "MT(Backspace, RAlt)", "Delete", "_", "_", "_"]
+], [    
+    ["F9", "F10", "F11", "F12", "No", "MouseBtn1", "Home", "PageUp", "PageDown", "End"],
+    ["MT(F5, LGui)", "MT(F6, LAlt)", "MT(F7, LCtrl)", "MT(F8, LShift)", "No", "MouseBtn3", "MT(Right, RShift)", "MT(Up, RCtrl)", "MT(Down, LAlt)", "MT(Left, LGui)"],
+    ["F1", "F2", "F3", "F4", "No", "MouseBtn2", "MouseRight", "MouseUp", "MouseDown", "MouseLeft"],
+    ["_", "_", "_", "MO(0)", "_", "_", "MO(1)", "_", "_", "_"]
+], [
+    ["No", "SHIFTED(Kc7)", "SHIFTED(Kc8)", "SHIFTED(Kc9)", "SHIFTED(Kc0)", "KpPlus", "Kp7", "Kp8", "Kp9", "KpAsterisk"],
+    ["No", "SHIFTED(Kc4)", "SHIFTED(Kc5)", "SHIFTED(Kc6)", "MO(2)", "KpMinus", "Kp4", "Kp5", "Kp6", "KpSlash"],
+    ["No", "SHIFTED(Kc1)", "SHIFTED(Kc2)", "SHIFTED(Kc3)", "MO(0)", "Kp0", "Kp1", "Kp2", "Kp3", "KpEnter"],
+    ["_", "_", "_", "Space", "Enter", "MT(Backspace, RAlt)", "Delete", "_", "_", "_"]
+]]
+
+[ble]
+enabled = true
+
+[behavior]
+tap_hold = { enable_hrm = true }
+
+[split]
+connection = "ble"
+
+[split.central]
+rows = 4
+cols = 5
+row_offset = 0
+col_offset = 0
+
+[split.central.matrix]
+input_pins = ["P1_00", "P0_11", "P1_04", "P1_06"]
+output_pins = ["P1_15", "P1_13", "P1_11", "P0_10", "P0_09"]
+
+[[split.peripheral]]
+rows = 4
+cols = 5
+row_offset = 0
+col_offset = 5
+
+[split.peripheral.matrix]
+input_pins = ["P1_13", "P1_11", "P0_10", "P0_09"]
+output_pins = ["P0_24", "P1_00", "P0_11", "P1_04", "P1_06"]
