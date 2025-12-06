@@ -10,212 +10,48 @@ board = "nice!nano_v2"
 rows = 4
 cols = 10
 layers = 4
-keymap = [
-    [
-        # Base
-        [
-            "Q",
-            "W",
-            "E",
-            "R",
-            "T",
-            "Y",
-            "U",
-            "I",
-            "O",
-            "P",
-        ],
-        [
-            "MT(A, LGui)",
-            "MT(S, LAlt)",
-            "MT(D, LCtrl)",
-            "MT(F, LShift)",
-            "G",
-            "H",
-            "MT(J, RShift)",
-            "MT(K, RCtrl)",
-            "MT(L, LAlt)",
-            "MT(Semicolon, RGui)",
-        ],
-        [
-            "Z",
-            "X",
-            "C",
-            "V",
-            "B",
-            "N",
-            "M",
-            "Comma",
-            "Dot",
-            "Slash",
-        ],
-        [
-            "_",
-            "_",
-            "_",
-            "TD(0)",
-            "TD(9)",
-            "Enter",
-            "Tab",
-            "_",
-            "_",
-            "_",
-        ],
-    ],
-    [
-        # Navigation
-        [
-            "F9",
-            "F10",
-            "F11",
-            "F12",
-            "MouseBtn1",
-            "Escape",
-            "Home",
-            "PageDown",
-            "PageUp",
-            "End",
-        ],
-        [
-            "MT(F5, LGui)",
-            "MT(F6, LAlt)",
-            "MT(F7, LCtrl)",
-            "MT(F8, LShift)",
-            "MouseBtn3",
-            "Backspace",
-            "MT(Left, RShift)",
-            "MT(Down, RCtrl)",
-            "MT(Up, LAlt)",
-            "MT(Right, LGui)",
-        ],
-        [
-            "F1",
-            "F2",
-            "F3",
-            "F4",
-            "MouseBtn2",
-            "Delete",
-            "MouseLeft",
-            "MouseDown",
-            "MouseUp",
-            "MouseRight",
-        ],
-        [
-            "_",
-            "_",
-            "_",
-            "TD(1)",
-            "_",
-            "_",
-            "_",
-            "_",
-            "_",
-            "_",
-        ],
-    ],
-    [
-        # Programming
-        [
-            "WM(Q, RAlt)",
-            "WM(W, RAlt)",
-            "WM(E, RAlt)",
-            "WM(R, RAlt)",
-            "WM(T, RAlt)",
-            "Equal",
-            "Kc7",
-            "Kc8",
-            "Kc9",
-            "Kc0",
-        ],
-        [
-            "TD(4)",
-            "TD(5)",
-            "TD(6)",
-            "TD(7)",
-            "WM(H, RAlt)",
-            "Quote",
-            "MT(Kc4, RShift)",
-            "MT(Kc5, RCtrl)",
-            "MT(Kc6, LAlt)",
-            "MT(Minus, RGui)",
-        ],
-        [
-            "Grave",
-            "WM(X, RAlt)",
-            "WM(C, RAlt)",
-            "WM(V, RAlt)",
-            "Backslash",
-            "N",
-            "Kc1",
-            "Kc2",
-            "Kc3",
-            "Dot",
-        ],
-        [
-            "_",
-            "_",
-            "_",
-            "TD(1)",
-            "_",
-            "_",
-            "TD(3)",
-            "_",
-            "_",
-            "_",
-        ],
-    ],
-    [
-        # Peripherics
-        [
-            "User6",
-            "User5",
-            "No",
-            "No",
-            "No",
-            "KbVolumeUp",
-            "MediaPrevTrack",
-            "MediaRewind",
-            "MediaFastForward",
-            "MediaNextTrack",
-        ],
-        [
-            "No",
-            "No",
-            "No",
-            "No",
-            "No",
-            "KbVolumeDown",
-            "MediaPlayPause",
-            "MediaStop",
-            "MediaSelect",
-            "BrightnessUp",
-        ],
-        [
-            "No",
-            "No",
-            "No",
-            "No",
-            "No",
-            "KbMute",
-            "User0",
-            "User1",
-            "User2",
-            "BrightnessDown",
-        ],
-        [
-            "__",
-            "__",
-            "__",
-            "No",
-            "No",
-            "No",
-            "TO(2)",
-            "__",
-            "__",
-            "__",
-        ],
-    ],
-]
+matrix_map = """
+(0,0) (0,1) (0,2) (0,3) (0,4)    (0,5) (0,6) (0,7) (0,8) (0,9)
+(1,0) (1,1) (1,2) (1,3) (1,4)    (1,5) (1,6) (1,7) (1,8) (1,9)
+(2,0) (2,1) (2,2) (2,3) (2,4)    (2,5) (2,6) (2,7) (2,8) (2,9)
+                 (3,3)  (3,4)    (3,5)  (3,6)
+"""
+
+[[layer]]
+name = "base"
+keys = """
+Q          W          E           R            T    Y U            I           O          P
+MT(A,LGui) MT(S,LAlt) MT(D,LCtrl) MT(F,LShift) G    H MT(J,RShift) MT(K,RCtrl) MT(L,LAlt) MT(Semicolon,RGui)
+Z          X          C           V            B    N M            Comma       Dot        Slash
+                                    TD(0)  Space    Enter  Tab
+"""
+
+[[layer]]
+name = "navigation"
+keys = """
+F9          F10         F11          F12           MouseBtn1    Escape    Home            PageDown       PageUp      End
+MT(F5,LGui) MT(F6,LAlt) MT(F7,LCtrl) MT(F8,LShift) MouseBtn3    Backspace MT(Left,RShift,NAV) MT(Down,RCtrl,NAV) MT(Up,LAlt,NAV) MT(Right,LGui,NAV)
+F1          F2          F3           F4            MouseBtn2    Delete    MouseLeft       MouseDown      MouseUp      MouseRight
+                                                   TD(1)  __    __  __   
+"""
+
+[[layer]]
+name = "programming"
+keys = """
+WM(Q,RAlt) WM(W,RAlt) WM(E,RAlt) WM(R,RAlt) WM(T,RAlt)    Equal Kc7            Kc8           Kc9          Kc0
+TD(4)      TD(5)      TD(6)      TD(7)      WM(H,RAlt)    Quote MT(Kc4,RShift) MT(Kc5,RCtrl) MT(Kc6,LAlt) MT(Minus,RGui)
+Grave      WM(X,RAlt) WM(C,RAlt) WM(V,RAlt) Backslash     N     Kc1            Kc2           Kc3          Dot
+                                              TD(1)  _    _  TD(3)
+"""
+
+[[layer]]
+name = "peripherics"
+keys = """
+User6 User5 No No No    KbVolumeUp   MediaPrevTrack MediaRewind MediaFastForward MediaNextTrack
+No    No    No No No    KbVolumeDown MediaPlayPause MediaStop   MediaSelect      BrightnessUp
+No    No    No No No    KbMute       User0          User1       User2            BrightnessDown
+              No  No    CapsLock  TO(2)
+"""
 
 [storage]
 clear_layout = true
@@ -223,13 +59,9 @@ clear_layout = true
 [ble]
 enabled = true
 
-[behavior]
-one_shot = { timeout = "10s" }
-
 [behavior.morse]
-enable_flow_tap = true
+enable_flow_tap = false
 permissive_hold = true
-prior_idle_time = "150ms"
 hold_on_other_press = false
 hold_timeout = "250ms"
 gap_timeout = "250ms"
@@ -243,8 +75,10 @@ morses = [
     { tap = "WM(D, RAlt)", hold = "LCtrl" },
     { tap = "WM(F, RAlt)", hold = "LShift" },
     { tap = "WM(L, RAlt)", hold = "RGui" },
-    { tap = "Space", hold = "CapsLock" },
 ]
+
+[behavior.morse.profiles]
+NAV = { enable_flow_tap = true, permissive_hold = true, prior_idle_time = "150ms", hold_on_other_press = false, hold_timeout = "250ms", gap_timeout = "250ms" }
 
 [split]
 connection = "ble"
