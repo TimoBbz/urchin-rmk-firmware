@@ -10,7 +10,7 @@ edition = "2021"
 license = "MIT OR Apache-2.0"
 
 [dependencies]
-# rmk = { git = "https://github.com/HaoboGu/rmk", rev = "746cb3ff4b854137dbb2d58ab55da4e311bbecee", features = [
+# rmk = { git = "https://github.com/HaoboGu/rmk", rev = "63f9d29629d6126d4d7a5104da96452f539b95c0", features = [
 rmk = { version = "0.8", features = [
     "nrf52840_ble",
     "split",
@@ -65,6 +65,12 @@ static_cell = "2"
 rand = { version = "0.8.4", default-features = false }
 rand_core = { version = "0.6" }
 rand_chacha = { version = "0.3", default-features = false }
+sharp-memory-display = { path = "../sharp-memory-display", default-features = false, features = [
+    "ls011b7dh03",
+] }
+embedded-graphics = "0.7.1"
+itoa = "1.0.15"
+embedded-hal = "0.2"
 
 [build-dependencies]
 xz2 = "0.1.7"

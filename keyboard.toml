@@ -50,7 +50,7 @@ keys = """
 User6 User5 No No No    KbVolumeUp   MediaPrevTrack MediaRewind MediaFastForward MediaNextTrack
 No    No    No No No    KbVolumeDown MediaPlayPause MediaStop   MediaSelect      BrightnessUp
 No    No    No No No    KbMute       User0          User1       User2            BrightnessDown
-              No  No    CapsLock  TO(2)
+              No  F24    CapsLock  TO(2)
 """
 
 [storage]
