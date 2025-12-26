@@ -1,32 +1,37 @@
-# RMK 
+# Urchin RMK Ergo-L
 
-RMK is a feature-rich and easy-to-use keyboard firmware.
+A firmware for the [Urchin Keyboard](https://github.com/duckyb/urchin), made with [RMK](https://rmk.rs/) to use with the layout [Ergo-L](https://ergol.org/).
 
-## uf2 support
+## Install instructions
 
-If you’re using the Adafruit_nRF52_Bootloader (pre-installed on the nice!nano), you’re in luck! This bootloader supports the .uf2 firmware format, which eliminates the need for a debugging probe to flash your firmware. RMK uses the `cargo-make` tool to generate .uf2 firmware, with the generation process defined in the `Makefile.toml`.
+- Install the layout Ergo-L on your machine
+- Build and flash the firmware to the keyboard
+   1. `cargo make uf2 --release`
+   2. Flash each uf2 file to its keyboard part (central is left), with drag-&-drop.
 
-Follow these steps to generate and flash the .uf2 firmware with RMK:
+## Debugging
 
-1. Get `cargo-make` tool:
-   ```shell
-   cargo install --force cargo-make
-   ```
-2. Compile RMK and generates .uf2 firmware:
-   ```shell
-   cargo make uf2 --release
-   ```
-3. Flash
+To understand how the controller event works without a debug probe, the log_controller module can be used.
 
-   - Put your board into bootloader mode. A USB drive will appear on your computer.
-   - Drag and drop the generated .uf2 firmware file onto the USB drive. The RMK firmware will be automatically flashed onto your microcontroller.
+1. Add heapless to the project: `cargo add heapless`
+2. Replace the ScreenController with the LogController:
+```rs
+mod log_controller;
+use log_controller::LogController;
 
-   For additional details on entering bootloader mode and flashing firmware, refer to the [nice!nano documentation](https://nicekeyboards.com/docs/nice-nano/getting-started#flashing-firmware-and-bootloaders)
+#[rmk_central]
+mod keyboard_central {
+    #[controller(event)]
+    fn screen_controller() -> LogController {
+        /*
+        ...
+        */
 
-### Tips for nRF52840
-
-Most nice!nano compatible boards have bootloader with SoftDevice pre-flashed. Since v0.7.x, RMK will remove old SoftDevice Bluetooth stack and replace it with its own. So if you want to rollback to v0.6.x, or switch to firmwares that use SoftDevice stack(for example, zmk), you will need to [re-flash the bootloader](https://nicekeyboards.com/docs/nice-nano/troubleshooting#my-nicenano-seems-to-be-acting-up-and-i-want-to-re-flash-the-bootloader).
-
-### Additional notes
-
-RMK defaults to USB-priority mode if a USB cable is connected. After flashing, remember to disconnect the USB cable, or [switch to BLE-priority mode](https://rmk.rs/docs/features/wireless.html#multiple-profile-support) by pressing User11(Switch Output) key.
+        LogController {
+            sub: unwrap!(CONTROLLER_CHANNEL.subscriber()),
+            display,
+            log_history: [None; LOG_LINES],
+        }
+    }
+}
+```

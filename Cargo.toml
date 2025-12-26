@@ -1,10 +1,10 @@
 [package]
-name = "urchin-basic"
+name = "urchin-rmk-firmware"
 version = "0.1.0"
-authors = ["Haobo Gu <haobogu@outlook.com>"]
-description = "Keyboard firmware written in Rust"
-homepage = "https://github.com/haobogu/rmk"
-repository = "https://github.com/haobogu/rmk"
+authors = ["Timothé Bailly-Barthez <timothe@bailly-barthez.com>"]
+description = "Urchin keyboard firmware for Ergo-L with Rust"
+homepage = "https://github.com/TimoBbz/urchin-rmk-firmware"
+repository = "https://github.com/TimoBbz/urchin-rmk-firmware"
 readme = "README.md"
 edition = "2021"
 license = "MIT OR Apache-2.0"
