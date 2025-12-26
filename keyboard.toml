@@ -11,10 +11,10 @@ rows = 4
 cols = 10
 layers = 4
 matrix_map = """
-(0,0) (0,1) (0,2) (0,3) (0,4)    (0,5) (0,6) (0,7) (0,8) (0,9)
-(1,0) (1,1) (1,2) (1,3) (1,4)    (1,5) (1,6) (1,7) (1,8) (1,9)
-(2,0) (2,1) (2,2) (2,3) (2,4)    (2,5) (2,6) (2,7) (2,8) (2,9)
-                 (3,3)  (3,4)    (3,5)  (3,6)
+(0,0,L) (0,1,L) (0,2,L) (0,3,L) (0,4,L)    (0,5,R) (0,6,R) (0,7,R) (0,8,R) (0,9,R)
+(1,0,L) (1,1,L) (1,2,L) (1,3,L) (1,4,L)    (1,5,R) (1,6,R) (1,7,R) (1,8,R) (1,9,R)
+(2,0,L) (2,1,L) (2,2,L) (2,3,L) (2,4,L)    (2,5,R) (2,6,R) (2,7,R) (2,8,R) (2,9,R)
+                       (3,3,L)  (3,4,L)    (3,5,R)  (3,6,R)
 """
 
 [[layer]]
@@ -50,8 +50,11 @@ keys = """
 User6 User5 No No No    KbVolumeUp   MediaPrevTrack MediaRewind MediaFastForward MediaNextTrack
 No    No    No No No    KbVolumeDown MediaPlayPause MediaStop   MediaSelect      BrightnessUp
 No    No    No No No    KbMute       User0          User1       User2            BrightnessDown
-              No  F24    CapsLock  TO(2)
+              No  No    CapsLock     TO(2)
 """
+
+[host]
+vial_enabled = false
 
 [storage]
 clear_layout = true
@@ -60,7 +63,9 @@ clear_layout = true
 enabled = true
 
 [behavior.morse]
-enable_flow_tap = false
+enable_flow_tap = true
+unilateral_tap = true
+prior_idle_time = "50ms"
 permissive_hold = true
 hold_on_other_press = false
 hold_timeout = "250ms"
@@ -77,8 +82,13 @@ morses = [
     { tap = "WM(L, RAlt)", hold = "RGui" },
 ]
 
-[behavior.morse.profiles]
-NAV = { enable_flow_tap = true, permissive_hold = true, prior_idle_time = "150ms", hold_on_other_press = false, hold_timeout = "250ms", gap_timeout = "250ms" }
+[behavior.morse.profiles.NAV]
+enable_flow_tap = true
+prior_idle_time = "150ms"
+permissive_hold = true
+hold_on_other_press = false
+hold_timeout = "250ms"
+gap_timeout = "250ms"
 
 [split]
 connection = "ble"

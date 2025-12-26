@@ -12,10 +12,9 @@ use embedded_graphics::{
         MonoTextStyle,
     },
     pixelcolor::BinaryColor,
-    prelude::{Dimensions, DrawTarget, Point, Size},
-    primitives::Rectangle,
+    prelude::Point,
     text::Text,
-    Drawable, Pixel,
+    Drawable,
 };
 use rmk::{
     ble::BleState,
@@ -26,9 +25,9 @@ use rmk::{
 };
 use sharp_memory_display::*;
 
-use crate::no_pin::NoPin;
+use crate::nice_view::NiceView;
 
-mod no_pin;
+mod nice_view;
 
 #[derive(Default, PartialEq)]
 enum MyBleState {
@@ -156,56 +155,6 @@ const USB_DATA: &[u8] = &[
     0b11111111, 0b11111111, 0b11000011, 0b111_00000,
 ];
 
-pub struct RotatedDrawTarget<T>
-where
-    T: DrawTarget,
-{
-    parent: T,
-}
-
-impl<T> RotatedDrawTarget<T>
-where
-    T: DrawTarget,
-{
-    pub fn new(parent: T) -> Self {
-        Self { parent }
-    }
-}
-
-impl<T> DrawTarget for RotatedDrawTarget<T>
-where
-    T: DrawTarget,
-{
-    type Color = T::Color;
-    type Error = T::Error;
-
-    fn draw_iter<I>(&mut self, pixels: I) -> Result<(), Self::Error>
-    where
-        I: IntoIterator<Item = Pixel<Self::Color>>,
-    {
-        let parent_width = self.parent.bounding_box().size.width as i32;
-
-        self.parent.draw_iter(
-            pixels
-                .into_iter()
-                .map(|Pixel(p, c)| Pixel(Point::new(parent_width - p.y, p.x), c)),
-        )
-    }
-}
-
-impl<T> Dimensions for RotatedDrawTarget<T>
-where
-    T: DrawTarget,
-{
-    fn bounding_box(&self) -> Rectangle {
-        let parent_bb = self.parent.bounding_box();
-        Rectangle::new(
-            parent_bb.top_left,
-            Size::new(parent_bb.size.height, parent_bb.size.width),
-        )
-    }
-}
-
 #[derive(Default)]
 struct ScreenState {
     layer: u8,
@@ -218,13 +167,13 @@ struct ScreenState {
 
 struct ScreenController<'a> {
     sub: ControllerSub,
-    display: RotatedDrawTarget<MemoryDisplay<spim::Spim<'a>, Output<'a>, NoPin>>,
+    display: NiceView<'a>,
     current_state: ScreenState,
 }
 
 impl ScreenController<'_> {
     fn flush_state_to_the_display(&mut self) {
-        self.display.parent.clear_buffer();
+        self.display.clear_buffer();
 
         if self.current_state.connection_type == 0 {
             let raw_image = ImageRaw::<BinaryColor>::new(USB_DATA, 27);
@@ -268,7 +217,7 @@ impl ScreenController<'_> {
             Text::new(battery_repr, Point { x: 32, y: 32 }, battery_style).draw(&mut self.display)
         );
 
-        self.display.parent.flush_buffer();
+        self.display.flush_buffer();
     }
 }
 
@@ -321,7 +270,9 @@ impl Controller for ScreenController<'_> {
                 }
                 self.current_state.connection_type = connection_type;
             }
-            _ => (),
+            _ => {
+                return;
+            }
         }
         self.flush_state_to_the_display();
     }
@@ -330,8 +281,6 @@ impl Controller for ScreenController<'_> {
         self.sub.next_message_pure().await
     }
 }
-
-const DISP: NoPin = NoPin;
 
 #[rmk_central]
 mod keyboard_central {
@@ -344,12 +293,12 @@ mod keyboard_central {
         config.mode = MODE;
         let spi = spim::Spim::new_txonly(p.SPI3, Irqs, p.P0_20, p.P0_17, config);
         let cs = Output::new(p.P0_06, Level::High, OutputDrive::Standard);
-        let mut display = MemoryDisplay::new(spi, cs, DISP);
+        let mut display = NiceView::new(spi, cs);
         display.clear();
 
         ScreenController {
             sub: unwrap!(CONTROLLER_CHANNEL.subscriber()),
-            display: RotatedDrawTarget::new(display),
+            display,
             current_state: ScreenState::default(),
         }
     }

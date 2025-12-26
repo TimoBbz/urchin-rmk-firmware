@@ -10,20 +10,16 @@ edition = "2021"
 license = "MIT OR Apache-2.0"
 
 [dependencies]
-# rmk = { git = "https://github.com/HaoboGu/rmk", rev = "63f9d29629d6126d4d7a5104da96452f539b95c0", features = [
-rmk = { version = "0.8", features = [
+# rmk = { git = "https://github.com/HaoboGu/rmk", rev = "63f9d29629d6126d4d7a5104da96452f539b95c0", default-features = false, features = [
+# rmk = { path = "../rmk/rmk", default-features = false, features = [
+rmk = { version = "0.8", default-features = false, features = [
+    "storage",
     "nrf52840_ble",
     "split",
     "async_matrix",
     "adafruit_bl",
     "controller",
 ] }
-# rmk = { path="../rmk/rmk", features = [
-#     "nrf52840_ble",
-#     "split",
-#     "async_matrix",
-#     "adafruit_bl",
-# ] }
 nrf-sdc = { git = "https://github.com/alexmoon/nrf-sdc", rev = "11d5c3c", default-features = false, features = [
     "defmt",
     "peripheral",
