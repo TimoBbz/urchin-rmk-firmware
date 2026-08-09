@@ -1,5 +1,7 @@
 #![no_main]
 #![no_std]
+use core::mem::{discriminant, replace};
+
 use defmt::unwrap;
 use embassy_nrf::{
     gpio::{Level, Output, OutputDrive},
@@ -28,14 +30,6 @@ use sharp_memory_display::*;
 use crate::nice_view::NiceView;
 
 mod nice_view;
-
-#[derive(Default, PartialEq)]
-enum MyBleState {
-    Advertising,
-    Connected,
-    #[default]
-    None,
-}
 
 #[rustfmt::skip]
 const BLUETOOTH_NONE_DATA: &[u8] = &[
@@ -155,14 +149,26 @@ const USB_DATA: &[u8] = &[
     0b11111111, 0b11111111, 0b11000011, 0b111_00000,
 ];
 
-#[derive(Default)]
 struct ScreenState {
     layer: u8,
     ble_profile: u8,
-    ble_state: MyBleState,
+    ble_state: BleState,
     connection_type: u8,
     battery_percent: u8,
     charging_state: bool,
+}
+
+impl Default for ScreenState {
+    fn default() -> Self {
+        ScreenState {
+            layer: 0,
+            ble_profile: 0,
+            ble_state: BleState::None,
+            connection_type: 0,
+            battery_percent: 0,
+            charging_state: false,
+        }
+    }
 }
 
 struct ScreenController<'a> {
@@ -188,9 +194,9 @@ impl ScreenController<'_> {
             let profile_style = MonoTextStyle::new(&FONT_7X13_BOLD, BinaryColor::Off);
             let raw_image = ImageRaw::<BinaryColor>::new(
                 match self.current_state.ble_state {
-                    MyBleState::Advertising => BLUETOOTH_ADVERTISING_DATA,
-                    MyBleState::Connected => BLUETOOTH_CONNECTED_DATA,
-                    MyBleState::None => BLUETOOTH_NONE_DATA,
+                    BleState::Advertising => BLUETOOTH_ADVERTISING_DATA,
+                    BleState::Connected => BLUETOOTH_CONNECTED_DATA,
+                    BleState::None => BLUETOOTH_NONE_DATA,
                 },
                 18,
             );
@@ -204,6 +210,7 @@ impl ScreenController<'_> {
             1 => "NAV",
             2 => "PROG",
             3 => "PERI",
+            4 => "NAV",
             _ => "",
         };
         let profile_style = MonoTextStyle::new(&FONT_10X20, BinaryColor::Off);
@@ -225,56 +232,24 @@ impl Controller for ScreenController<'_> {
     type Event = ControllerEvent;
 
     async fn process_event(&mut self, event: Self::Event) {
-        match event {
-            ControllerEvent::Layer(layer) => {
-                if layer == self.current_state.layer {
-                    return;
-                }
-                self.current_state.layer = layer;
+        let state = &mut self.current_state;
+        let changed = match event {
+            ControllerEvent::Layer(new) => replace(&mut state.layer, new) != new,
+            ControllerEvent::Battery(new) => replace(&mut state.battery_percent, new) != new,
+            ControllerEvent::BleState(new_profile, new_state) => {
+                let old_state = replace(&mut state.ble_state, new_state);
+                let old_profile = replace(&mut state.ble_profile, new_profile);
+                discriminant(&old_state) != discriminant(&new_state) || old_profile != new_profile
             }
-            ControllerEvent::Battery(battery_percent) => {
-                if battery_percent == self.current_state.battery_percent {
-                    return;
-                }
-                self.current_state.battery_percent = battery_percent;
-            }
-            ControllerEvent::BleState(profile, ble_state) => {
-                let my_ble_state = match ble_state {
-                    BleState::Advertising => MyBleState::Advertising,
-                    BleState::Connected => MyBleState::Connected,
-                    BleState::None => MyBleState::None,
-                };
-                if my_ble_state == self.current_state.ble_state
-                    && profile == self.current_state.ble_profile
-                {
-                    return;
-                }
-                self.current_state.ble_profile = profile;
-                self.current_state.ble_state = my_ble_state;
-            }
-            ControllerEvent::BleProfile(profile) => {
-                if profile == self.current_state.ble_profile {
-                    return;
-                }
-                self.current_state.ble_profile = profile;
-            }
-            ControllerEvent::ChargingState(state) => {
-                if state == self.current_state.charging_state {
-                    return;
-                }
-                self.current_state.charging_state = state;
-            }
-            ControllerEvent::ConnectionType(connection_type) => {
-                if self.current_state.connection_type == connection_type {
-                    return;
-                }
-                self.current_state.connection_type = connection_type;
-            }
-            _ => {
-                return;
-            }
+            ControllerEvent::BleProfile(new) => replace(&mut state.ble_profile, new) != new,
+            ControllerEvent::ChargingState(new) => replace(&mut state.charging_state, new) != new,
+            ControllerEvent::ConnectionType(new) => replace(&mut state.connection_type, new) != new,
+            _ => false,
+        };
+
+        if changed {
+            self.flush_state_to_the_display();
         }
-        self.flush_state_to_the_display();
     }
 
     async fn next_message(&mut self) -> Self::Event {
